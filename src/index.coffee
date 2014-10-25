@@ -1,76 +1,50 @@
-b = require './browser' #some handy output functions
-Example = require './example' #just an example
+b = require './browser'
 
-b.h1 'Playground'
+TitForTat = require './agent/tit_for_tat'
+AlwaysDefect = require './agent/always_defect'
 
-b.h2 'Documentation'
+b.h1 'Agents'
 
-b.print 'There are many cool commands in the browser.coffee module'
+agents = []
+agents.push {engine: new TitForTat, score: 0}
+agents.push {engine: new AlwaysDefect, score: 0}
 
-b.h3 '#h1 (value)'
-b.print 'Renders <h1> containing a desired value passed through the only argument'
+prisoner = {}
+prisoner.cc = 3
+prisoner.cd = 5
+prisoner.dc = 0
+prisoner.dd = 1
 
-b.h3 '#h2 (value)'
-b.print 'Renders <h2> containing a desired value passed through the only argument'
+b.h2 'Games'
 
-b.h3 '#h3 (value)'
-b.print 'Renders <h3> containing a desired value passed through the only argument'
+for agent in agents
+	for agent2 in agents
 
-b.h3 '#print (value, escaped = true)'
-b.print 'Prints a value to the output and escape HTML tags'
+		b.print agent.engine.getName() + ' vs ' + agent2.engine.getName()
 
-b.h3 '#reset'
-b.print 'Clean the page'
+		# let's play!
+		play = agent.engine.play()
+		play2 = agent2.engine.play()
 
-b.h3 '#image (src)'
-b.print 'Add an image from src to the page'
+		# tell them what their buddy did play
+		agent.engine.opponentPlayed play2
+		agent2.engine.opponentPlayed play
 
-b.h3 '#list (list)'
-b.print 'Renders the unordered list, accepts a list as only argument'
+		# give them score
+		if play is 'cooperate' and play2 is 'cooperate'
+			agent.score += prisoner.cc
+			agent2.score += prisoner.cc
+		else if play is 'cooperate' and play2 is 'defend'
+			agent.score += prisoner.dc
+			agent2.score += prisoner.cd
+		else if play is 'defend' and play2 is 'cooperate'
+			agent.score += prisoner.cd
+			agent2.score += prisoner.dc
+		else
+			agent.score += prisoner.dd
+			agent2.score += prisoner.dd
 
-b.h3 '#hr'
-b.print 'Renders a horizontal line'
-
-b.h3 '#table (matrix)'
-b.print 'Renders a table, accepts a matrix as only argument'
-
-b.h3 '#code (value, escaped = true)'
-b.print 'Renders a code block (escaped)'
-
-b.h2 'Examples'
-
-b.print 'Hai hacker! You are all set to rock!'
-do b.hr
-
-# Example class usage
-example = new Example
-example.setFoo 'some output'
-b.print example.getFoo()
-
-# Example of table
-b.table [
-	['January', 'February', 'March']
-	['April', 'May', 'June']
-	['July', 'August', 'September']
-	['October', 'November', 'December']
-]
-
-b.code "b.table [\n
-  \t['January', 'February', 'March']\n
-  \t['April', 'May', 'June']\n
-  \t['July', 'August', 'September']\n
-  \t['October', 'November', 'December']\n
-]\n
-"
-
-b.list ['January', 'February', 'March']
-
-progress = new b.progress 1000
-(someHeavyTask = (i) ->
-   setTimeout ->
-      progress.update 1000-i
-      someHeavyTask i if --i+1
-   , 300
-) 1000
-
-b.image "http://quicklol.com/wp-content/uploads/2012/03/omg-bacon-funny-cat.jpg"
+b.h2 'Scores'
+table = []
+table.push [agent.engine.getName(), agent.score] for agent in agents
+b.table table

@@ -69,3 +69,42 @@ describe 'win stay lose shift agent', ->
 			winStayLoseShift.play()
 			winStayLoseShift.opponentPlayed 'defect'
 			winStayLoseShift.play().should.equal 'cooperate'
+
+	describe 'reset', ->
+		it 'should delete the history', ->
+			winStayLoseShift = new WinStayLoseShift
+			winStayLoseShift.opponentPlayed 'cooperate'
+			do winStayLoseShift.reset
+			winStayLoseShift.getHistory().length.should.equal 0
+
+		it 'should set the average payoff to 0', ->
+			winStayLoseShift = new WinStayLoseShift
+			test = {}
+			test.name = 'Test'
+			test.cc = 3
+			test.cd = 0
+			test.dc = 5
+			test.dd = 1
+			winStayLoseShift.setGame test
+			winStayLoseShift.opponentPlayed 'cooperate'
+			winStayLoseShift.play()
+
+			do winStayLoseShift.reset
+			winStayLoseShift.avgPayoff.should.equal 0
+
+		it 'should set the agents last move to cooperate', ->
+			winStayLoseShift = new WinStayLoseShift
+			test = {}
+			test.name = 'Test'
+			test.cc = 3
+			test.cd = 0
+			test.dc = 5
+			test.dd = 1
+			winStayLoseShift.setGame test
+			winStayLoseShift.opponentPlayed 'defect'
+			winStayLoseShift.play()
+			winStayLoseShift.opponentPlayed 'cooperate'
+			winStayLoseShift.play()
+
+			do winStayLoseShift.reset
+			winStayLoseShift.myLastMove.should.equal 'cooperate'

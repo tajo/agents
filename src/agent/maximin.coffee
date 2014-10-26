@@ -14,3 +14,7 @@ module.exports = class Maximin extends Agent
 		super game
 		@p = (game.dd - game.dc)/(game.cc - game.dc - game.cd + game.dd)
 
+	reset: ->
+		super()
+		@p = 0.5
+

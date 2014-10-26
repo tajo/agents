@@ -48,3 +48,25 @@ describe 'basic agent', ->
 			agent.getGame().dc.should.equal 5
 			agent.getGame().dd.should.equal 1
 
+	describe 'reset', ->
+		it 'should delete history', ->
+			agent = new Agent
+			agent.opponentPlayed 'defect'
+			do agent.reset
+			agent.getHistory().length.should.equal 0
+
+		it 'should change the name to Agent', ->
+			agent = new Agent
+			agent.setName 'Test'
+			do agent.reset
+			agent.getName().should.equal 'Agent'
+
+		it 'should unset the game', ->
+			agent = new Agent
+			agent.setGame {name:'foo'}
+			do agent.reset
+			agent.getGame().name.should.equal 'default'
+
+
+
+

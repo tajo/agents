@@ -12,8 +12,7 @@ module.exports = class WinStayLoseShift extends Agent
 	constructor: () ->
 		super()
 		@setName 'Win-stay, Lose-shift'
-		@p = 0.5
-		@avg_payoff = 0;
+		@avgPayoff = 0;
 		@myLastMove = 'cooperate'
 
 	play: ->
@@ -42,4 +41,9 @@ module.exports = class WinStayLoseShift extends Agent
 	setGame: (game) ->
 		super game
 		@avgPayoff = (game.cc + game.dc + game.cd + game.dd)/4
+
+	reset: ->
+		super()
+		@avgPayoff = 0
+		@myLastMove = 'cooperate'
 

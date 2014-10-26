@@ -55,3 +55,31 @@ describe 'maximin agent', ->
 				defect++ if result is 'defect'
 			Math.abs(cooperate).should.be.equal 0
 
+	describe 'reset', ->
+		it 'should delete history', ->
+			maximin = new Maximin
+			maximin.opponentPlayed 'defect'
+			do maximin.reset
+			maximin.getHistory().length.should.equal 0
+
+		it 'should set strategy to 1/2', ->
+			maximin = new Maximin
+			test = {}
+			test.name = 'Test'
+			test.cc = 4
+			test.cd = 0
+			test.dc = 3
+			test.dd = 2
+			maximin.setGame test
+
+			do maximin.reset
+
+			cooperate = 0
+			defect = 0
+			for i in [0..1000]
+				result = maximin.play()
+				cooperate++ if result is 'cooperate'
+				defect++ if result is 'defect'
+			Math.abs(cooperate-defect).should.be.below 100
+
+

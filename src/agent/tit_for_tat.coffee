@@ -1,12 +1,12 @@
-module.exports = class TitForTat
+Agent = require './agent'
+
+module.exports = class TitForTat extends Agent
 	constructor: () ->
-		@history = 'cooperate'
-		@name = 'Tit-for-tat'
+		super()
+		@setName 'Tit for tat'
 
 	play: ->
-		return 'cooperate' if @history is 'cooperate'
+		return 'cooperate' if @getPreviousMove() is 'cooperate'
 		return 'defect'
 
-	opponentPlayed: (@history) ->
-	getName: -> @name
 

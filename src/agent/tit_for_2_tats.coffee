@@ -7,7 +7,7 @@ module.exports = class TitFor2Tats extends Agent
 
 	play: ->
 		h = @getHistory()
-		if h.length > 1 and h[-1..] is 'defect' and h[-2..] is 'defect'
+		if h.length > 1 and h[-1..][0] is 'defect' and h[-2..][0] is 'defect'
 			return 'defect'
 		return 'cooperate'
 

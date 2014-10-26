@@ -7,7 +7,7 @@ module.exports = class Agent
 	setName: (@name) ->
 	getName: -> @name
 	getPreviousMove: ->
-		return @history[-1..] if @history.length > 0
+		return @history[-1..][0] if @history.length > 0
 		return 'cooperate'
 	getHistory: -> @history
 	setGame: (@game) ->

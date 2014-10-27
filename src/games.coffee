@@ -17,7 +17,7 @@ chicken.dd = 1
 games.push chicken
 
 stag = {}
-stag.name = 'Stag'
+stag.name = 'Stag Hunt'
 stag.cc = 4
 stag.cd = -5
 stag.dc = 3

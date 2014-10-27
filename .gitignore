@@ -1,3 +1,5 @@
 node_modules/*
 public/src_js/*
 .DS_Store
+!public/src_js/index.js
+

@@ -2,22 +2,24 @@ Tournament = require './tournament'
 b = require './../browser'
 
 module.exports = class RoundRobin extends Tournament
-	constructor: (games, agents, @rounds) ->
+	constructor: (games, agents, @rounds=1000, @averaging=5) ->
 		super games, agents
 		do @initFinalScore
 
 	start: ->
 		for game in @getGames()
 			b.h2  game.name + ' game'
-			progress = new b.progress @rounds * @getAgents().length * @getAgents().length, '#00f', ' games have been played.'
+			progress = new b.progress @rounds * @averaging * @getAgents().length * @getAgents().length, '#00f', ' games have been played.'
 			counter = 1
 			for agent1 in @getAgents()
 				for agent2 in @getAgents()
-					for round in [1..@rounds]
-						@fight game, agent1, agent2
-						progress.update counter
-						counter++;
-					do @resetAgents
+					for rep in [1..@averaging]
+						for round in [1..@rounds]
+							@fight game, agent1, agent2
+							progress.update counter
+							counter++;
+						do @resetAgents
+					@finalScore[agent1.id][agent2.id] /= @averaging
 			do @printFinalScore
 			do @initFinalScore
 
@@ -25,26 +27,22 @@ module.exports = class RoundRobin extends Tournament
 		# let's play!
 		agent1.engine.setGame game
 		agent2.engine.setGame game
-		play = agent1.engine.play()
+		play1 = agent1.engine.play()
 		play2 = agent2.engine.play()
 
 		# tell them what their buddy did play
 		agent1.engine.opponentPlayed play2
-		agent2.engine.opponentPlayed play
+		agent2.engine.opponentPlayed play1
 
 		# give them score
-		if play is 'cooperate' and play2 is 'cooperate'
+		if play1 is 'cooperate' and play2 is 'cooperate'
 			@finalScore[agent1.id][agent2.id] += game.cc
-			@finalScore[agent2.id][agent1.id] += game.cc
-		else if play is 'cooperate' and play2 is 'defend'
+		else if play1 is 'cooperate' and play2 is 'defect'
 			@finalScore[agent1.id][agent2.id] += game.cd
-			@finalScore[agent2.id][agent1.id] += game.dc
-		else if play is 'defend' and play2 is 'cooperate'
+		else if play1 is 'defect' and play2 is 'cooperate'
 			@finalScore[agent1.id][agent2.id] += game.dc
-			@finalScore[agent2.id][agent1.id] += game.cd
 		else
 			@finalScore[agent1.id][agent2.id] += game.dd
-			@finalScore[agent2.id][agent1.id] += game.dd
 
 	initFinalScore: ->
 		@finalScore = []

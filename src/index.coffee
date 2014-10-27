@@ -26,6 +26,8 @@ agents.push {engine: new Maximin, score: 0}
 agents.push {engine: new WinStayLoseShift, score: 0}
 agent.id = key for agent, key in agents
 
-b.h1 'Round-robin tournament, ' + @rounds + ' rounds'
-roundRobin = new RoundRobin games, agents, 1000
+rounds = 1000
+averaging = 5
+b.h1 'Round-robin tournament, ' +  rounds + ' rounds, averaging ' + averaging
+roundRobin = new RoundRobin games, agents, rounds, averaging
 do roundRobin.start

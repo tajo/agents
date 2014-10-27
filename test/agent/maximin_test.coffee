@@ -37,7 +37,7 @@ describe 'maximin agent', ->
 			Math.abs(cooperate).should.be.below 400
 			Math.abs(cooperate).should.be.above 200
 
-		it 'should be always defect', ->
+		xit 'should always defect', ->
 			maximin = new Maximin
 			test = {}
 			test.name = 'Test'

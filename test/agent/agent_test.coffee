@@ -55,12 +55,6 @@ describe 'basic agent', ->
 			do agent.reset
 			agent.getHistory().length.should.equal 0
 
-		it 'should change the name to Agent', ->
-			agent = new Agent
-			agent.setName 'Test'
-			do agent.reset
-			agent.getName().should.equal 'Agent'
-
 		it 'should unset the game', ->
 			agent = new Agent
 			agent.setGame {name:'foo'}

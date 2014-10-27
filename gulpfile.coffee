@@ -46,7 +46,7 @@
 	gulp.task 'test', ->
 		gulp.src('test/**/*.coffee', {read: false})
 			.pipe(gulp_mocha({
-				reporter: 'nyan',
+				reporter: 'spec',
 				globals: {
 					should: require('should')
 				}

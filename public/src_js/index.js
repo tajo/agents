@@ -477,38 +477,31 @@
   agents = [];
 
   agents.push({
-    engine: new TitForTat,
-    score: 0
+    engine: new TitForTat
   });
 
   agents.push({
-    engine: new TitFor2Tats,
-    score: 0
+    engine: new TitFor2Tats
   });
 
   agents.push({
-    engine: new AlwaysCooperate,
-    score: 0
+    engine: new AlwaysCooperate
   });
 
   agents.push({
-    engine: new AlwaysDefect,
-    score: 0
+    engine: new AlwaysDefect
   });
 
   agents.push({
-    engine: new Random,
-    score: 0
+    engine: new Random
   });
 
   agents.push({
-    engine: new Maximin,
-    score: 0
+    engine: new Maximin
   });
 
   agents.push({
-    engine: new WinStayLoseShift,
-    score: 0
+    engine: new WinStayLoseShift
   });
 
   for (key = _i = 0, _len = agents.length; _i < _len; key = ++_i) {

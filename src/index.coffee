@@ -17,13 +17,13 @@ RoundRobin = require './tournament/round_robin'
 
 # Agents initialization
 agents = []
-agents.push {engine: new TitForTat, score: 0}
-agents.push {engine: new TitFor2Tats, score: 0}
-agents.push {engine: new AlwaysCooperate, score: 0}
-agents.push {engine: new AlwaysDefect, score: 0}
-agents.push {engine: new Random, score: 0}
-agents.push {engine: new Maximin, score: 0}
-agents.push {engine: new WinStayLoseShift, score: 0}
+agents.push {engine: new TitForTat}
+agents.push {engine: new TitFor2Tats}
+agents.push {engine: new AlwaysCooperate}
+agents.push {engine: new AlwaysDefect}
+agents.push {engine: new Random}
+agents.push {engine: new Maximin}
+agents.push {engine: new WinStayLoseShift}
 agent.id = key for agent, key in agents
 
 rounds = 1000

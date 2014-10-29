@@ -1,0 +1,21 @@
+{
+  "name": "agents",
+  "version": "1.0.0",
+  "homepage": "https://github.com/tajo/agents",
+  "authors": [
+    "tajo <vojtech@miksu.cz>"
+  ],
+  "description": "super cool app",
+  "main": "/public/index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "chartjs": "~0.2.0"
+  }
+}

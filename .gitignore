@@ -1,4 +1,5 @@
 node_modules/*
+bower_components/*
 public/src_js/*
 .DS_Store
 !public/src_js/index.js

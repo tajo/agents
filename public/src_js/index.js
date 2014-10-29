@@ -448,6 +448,29 @@
 
   })();
 
+  module.exports.barchart = function(datas) {
+    var canvas, data, myBarChart;
+    console.log('created');
+    canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 400;
+    document.body.appendChild(canvas);
+    data = {
+      labels: ["January", "February", "March", "April", "May", "June", "July"],
+      datasets: [
+        {
+          label: "My First dataset",
+          fillColor: "rgba(220,220,220,0.5)",
+          strokeColor: "rgba(220,220,220,0.8)",
+          highlightFill: "rgba(220,220,220,0.75)",
+          highlightStroke: "rgba(220,220,220,1)",
+          data: [65, 59, 80, 81, 56, 55, 40]
+        }
+      ]
+    };
+    return myBarChart = new Chart(canvas.getContext("2d")).Bar(datas);
+  };
+
 }).call(this);
 
 },{}],10:[function(require,module,exports){
@@ -594,13 +617,13 @@
     }
 
     RoundRobin.prototype.start = function() {
-      var agent1, agent2, counter, game, progress, rep, round, _i, _j, _k, _l, _len, _len1, _len2, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
+      var agent1, agent2, counter, game, rep, round, _i, _j, _k, _l, _len, _len1, _len2, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
       _ref = this.getGames();
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         game = _ref[_i];
         b.h2(game.name + ' game');
-        progress = new b.progress(this.rounds * this.averaging * this.getAgents().length * this.getAgents().length, '#00f', ' games have been played.');
+        b.print(this.rounds * this.averaging * this.getAgents().length * this.getAgents().length + ' games have been played.');
         counter = 1;
         _ref1 = this.getAgents();
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -611,12 +634,11 @@
             for (rep = _l = 1, _ref3 = this.averaging; 1 <= _ref3 ? _l <= _ref3 : _l >= _ref3; rep = 1 <= _ref3 ? ++_l : --_l) {
               for (round = _m = 1, _ref4 = this.rounds; 1 <= _ref4 ? _m <= _ref4 : _m >= _ref4; round = 1 <= _ref4 ? ++_m : --_m) {
                 this.fight(game, agent1, agent2);
-                progress.update(counter);
-                counter++;
               }
               this.resetAgents();
             }
             this.finalScore[agent1.id][agent2.id] /= this.averaging;
+            this.finalScore[agent1.id][agent2.id] = Math.round(this.finalScore[agent1.id][agent2.id]);
           }
         }
         this.printFinalScore();
@@ -667,7 +689,8 @@
     };
 
     RoundRobin.prototype.printFinalScore = function() {
-      var agent, agent1, agent2, finalScoreCopy, i, key, names, row, sum, _i, _j, _k, _l, _len, _len1, _len2, _len3, _m, _ref, _ref1, _ref2, _ref3;
+      var agent, agent1, agent2, data, finalScoreCopy, i, key, labels, names, row, scores, sum, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _n, _ref, _ref1, _ref2, _ref3, _ref4;
+      scores = [];
       finalScoreCopy = [];
       for (i = _i = 0, _ref = this.finalScore.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
         finalScoreCopy[i] = this.finalScore[i].slice();
@@ -682,6 +705,7 @@
           sum += finalScoreCopy[agent1.id][agent2.id];
         }
         finalScoreCopy[agent1.id].push(sum);
+        scores.push(sum);
       }
       for (key = _l = 0, _len2 = finalScoreCopy.length; _l < _len2; key = ++_l) {
         row = finalScoreCopy[key];
@@ -695,7 +719,25 @@
       }
       names.push('Results');
       finalScoreCopy.unshift(names);
-      return b.table(finalScoreCopy);
+      b.table(finalScoreCopy);
+      labels = [];
+      _ref4 = this.getAgents();
+      for (_n = 0, _len4 = _ref4.length; _n < _len4; _n++) {
+        agent = _ref4[_n];
+        labels.push(agent.engine.name);
+      }
+      data = {
+        labels: labels,
+        datasets: [
+          {
+            label: "Final scores",
+            fillColor: "rgba(130, 209, 138, 1)",
+            strokeColor: "rgba(0,0,0,0.8)",
+            data: scores
+          }
+        ]
+      };
+      return b.barchart(data);
     };
 
     return RoundRobin;

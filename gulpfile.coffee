@@ -6,6 +6,7 @@
 	gulp_open = require 'gulp-open'
 	path = require 'path'
 	tiny_lr = require 'tiny-lr'
+	gulpBowerFiles = require 'gulp-bower-files'
 
 	EXPRESS_PORT = 1337
 	EXPRESS_ROOT = './public/'
@@ -22,6 +23,8 @@
 	gulp.task 'watchCoffee', ->
 	   gulp.watch 'src/**/*.coffee', ['coffee2app']
 
+	gulp.task 'bower-files', ->
+		gulpBowerFiles().pipe(gulp.dest('./public/src_js/'))
 
 	gulp.task 'coffee2app', ->
 		gulp.src('src/**/*.coffee')

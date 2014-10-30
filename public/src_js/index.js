@@ -448,27 +448,24 @@
 
   })();
 
-  module.exports.barchart = function(datas) {
-    var canvas, data, myBarChart;
-    console.log('created');
+  module.exports.barchart = function(data, options) {
+    var canvas;
+    if (options == null) {
+      options = null;
+    }
     canvas = document.createElement('canvas');
     canvas.width = 600;
     canvas.height = 400;
     document.body.appendChild(canvas);
-    data = {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
-      datasets: [
-        {
-          label: "My First dataset",
-          fillColor: "rgba(220,220,220,0.5)",
-          strokeColor: "rgba(220,220,220,0.8)",
-          highlightFill: "rgba(220,220,220,0.75)",
-          highlightStroke: "rgba(220,220,220,1)",
-          data: [65, 59, 80, 81, 56, 55, 40]
-        }
-      ]
-    };
-    return myBarChart = new Chart(canvas.getContext("2d")).Bar(datas);
+    if (!options) {
+      options = {
+        scaleFontSize: 14,
+        scaleFontFamily: 'Arial',
+        animationSteps: 200,
+        scaleLineColor: "rgba(0,0,0,.4)"
+      };
+    }
+    return new Chart(canvas.getContext("2d")).Bar(data, options);
   };
 
 }).call(this);
@@ -532,7 +529,7 @@
     agent.id = key;
   }
 
-  b.print('<a href="https://github.com/tajo/playground" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>', false);
+  b.print('<a href="https://github.com/tajo/agents" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>', false);
 
   rounds = 1000;
 

@@ -12,6 +12,7 @@
     "gulp-coffeeify": "^0.1.2",
     "gulp-open": "^0.3.0",
     "main-bower-files": "^2.1.0",
+    "markdown": "^0.5.0",
     "tiny-lr": "^0.1.4"
   },
   "author": {

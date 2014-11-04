@@ -4,6 +4,8 @@ b = require './../browser'
 module.exports = class Evolutionary extends Tournament
 	constructor: (games, agents, @results) ->
 		super games, agents
+		b.md "The tournament is stopped if there is no significant change in population agent distribution
+		between two generations."
 
 	start: ->
 		numOfAgents = @getAgents().length
@@ -78,6 +80,22 @@ module.exports = class Evolutionary extends Tournament
 		for agent, key in @getAgents()
 			names.push agent.engine.getName() + ' <div style="float: right">' +  Math.round(finalResults[key][finalResults[key].length-1]*100) + '%</div>'
 		b.chartlabel names, colors
+
+		if game is 'Prisoner\'s Dilemma'
+			b.md "Terminator and Tit-for-tats cannot be invaded by other algorithms, so it makes sense that
+			these agents are the best. Why is Terminator the winner? Because it got a more points at the
+			beginning against other agents before they died."
+
+		if game is 'Chicken'
+			b.md "Terminator and always defect cannot be invaded by other algorithms, so it makes sense that
+			these agents are the best.
+			The Terminator was able to score better against tit-for-tats at the beginning. The always defect
+			scores better against the Terminator. This makes both agents equal after all."
+
+		if game is 'Stag Hunt'
+			b.md "Again, all best performing agents cannot be invaded by the rest. Since they are four there
+			is not many other agents that could be exploited to get some extra points.
+			So, there is a no clear winner."
 
 
 

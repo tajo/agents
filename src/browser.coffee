@@ -1,3 +1,5 @@
+markdown = require( "markdown" ).markdown
+
 module.exports.escapeHtml = (html) ->
 	map =
     '&': '&amp;',
@@ -134,9 +136,13 @@ module.exports.chartlabel = (names, colors) ->
 	document.body.appendChild div
 	return div
 
-module.exports.guid = ->
-    'guid' + Date.now()
+module.exports.guid = -> 'guid' + Date.now()
 
-
+module.exports.md = (value) ->
+	div = document.createElement 'div'
+	div.innerHTML = markdown.toHTML value
+	div.className = 'markdown'
+	document.body.appendChild div
+	return div
 
 

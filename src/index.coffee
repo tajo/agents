@@ -33,6 +33,10 @@ b.print '<a href="https://github.com/tajo/agents" target="_blank"><img style="po
 rounds = 1000
 averaging = 5
 
+b.md "The whole thing is written in JavaScript, so with an every refresh of this page all the tournaments are
+replayed. You can see the source code at [GitHub](https://github.com/tajo/agents) (I open-source it).
+All agents are also covered by unit tests, so there should be no bugs. - Vojtech Miksu"
+
 b.h1 'Round-robin tournament, ' +  rounds + ' rounds, averaging ' + averaging
 roundRobin = new RoundRobin games, agents, rounds, averaging
 do roundRobin.start

@@ -21,7 +21,7 @@ module.exports = class RoundRobin extends Tournament
 						do @resetAgents
 					@finalScore[agent1.id][agent2.id] /= @averaging
 					@finalScore[agent1.id][agent2.id]  = Math.round(@finalScore[agent1.id][agent2.id])
-			do @printFinalScore
+			@printFinalScore game.name
 
 			for row in @finalScore
 				newrow = []
@@ -61,7 +61,7 @@ module.exports = class RoundRobin extends Tournament
 			for agent2 in @getAgents()
 				@finalScore[agent1.id][agent2.id] = 0
 
-	printFinalScore: ->
+	printFinalScore: (game) ->
 		scores = []
 		finalScoreCopy = []
 		finalScoreCopy[i] = @finalScore[i].slice() for i in [0..@finalScore.length-1]
@@ -90,6 +90,24 @@ module.exports = class RoundRobin extends Tournament
 			]
 		}
 		b.barchart data
+
+		if game is 'Prisoner\'s Dilemma'
+			b.md "My algorithm is called Terminator. He uses first few games to detect if he
+			plays against the always cooperate algorithm. If so, he will always defect.
+			If not, he always cooperate (there is no other meanie algorithm). That's enough
+			to get an advantage over Tit-for-tat that would win otherwise."
+
+		if game is 'Chicken'
+			b.md "My algorithm is called Terminator. He uses first few games to detect if he
+			plays against the always cooperate OR always defect algorithm. If so, he
+			exploits them.
+			If not, he always cooperate. That's enough
+			to get an advantage over Win-stay, lose-shift that would win otherwise."
+
+		if game is 'Stag Hunt'
+			b.md "The Terminator is not able to exploit and outperform the Win-stay,lose-shift
+			algorithm without lowering his score against Tit-for-tat. It would have to switch
+			between cooperate and defect all the time, but that's very ineffective againts Tit-for-tats."
 
 
 

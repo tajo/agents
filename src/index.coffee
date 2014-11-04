@@ -14,6 +14,7 @@ WinStayLoseShift = require './agent/win_stay_lose_shift'
 
 # Tournaments
 RoundRobin = require './tournament/round_robin'
+Evolutionary = require './tournament/evolutionary'
 
 # Agents initialization
 agents = []
@@ -34,3 +35,6 @@ b.h1 'Round-robin tournament, ' +  rounds + ' rounds, averaging ' + averaging
 roundRobin = new RoundRobin games, agents, rounds, averaging
 do roundRobin.start
 
+b.h1 'Evolutionary tournament, 1000 generations max'
+evolutionary = new Evolutionary games, agents, roundRobin.getFinalScoreForEvoTournament()
+do evolutionary.start

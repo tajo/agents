@@ -468,11 +468,29 @@
     return new Chart(canvas.getContext("2d")).Bar(data, options);
   };
 
+  module.exports.linechart = function(data, options) {
+    var canvas;
+    if (options == null) {
+      options = null;
+    }
+    canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 400;
+    document.body.appendChild(canvas);
+    if (!options) {
+      options = {
+        scaleFontSize: 14,
+        scaleFontFamily: 'Arial'
+      };
+    }
+    return new Chart(canvas.getContext("2d")).Line(data, options);
+  };
+
 }).call(this);
 
 },{}],10:[function(require,module,exports){
 (function() {
-  var AlwaysCooperate, AlwaysDefect, Maximin, Random, RoundRobin, TitFor2Tats, TitForTat, WinStayLoseShift, agent, agents, averaging, b, games, key, roundRobin, rounds, _i, _len;
+  var AlwaysCooperate, AlwaysDefect, Evolutionary, Maximin, Random, RoundRobin, TitFor2Tats, TitForTat, WinStayLoseShift, agent, agents, averaging, b, evolutionary, games, key, roundRobin, rounds, _i, _len;
 
   b = require('./browser');
 
@@ -493,6 +511,8 @@
   WinStayLoseShift = require('./agent/win_stay_lose_shift');
 
   RoundRobin = require('./tournament/round_robin');
+
+  Evolutionary = require('./tournament/evolutionary');
 
   agents = [];
 
@@ -541,9 +561,15 @@
 
   roundRobin.start();
 
+  b.h1('Evolutionary tournament, 1000 generations max');
+
+  evolutionary = new Evolutionary(games, agents, roundRobin.getFinalScoreForEvoTournament());
+
+  evolutionary.start();
+
 }).call(this);
 
-},{"./agent/always_cooperate":2,"./agent/always_defect":3,"./agent/maximin":4,"./agent/random":5,"./agent/tit_for_2_tats":6,"./agent/tit_for_tat":7,"./agent/win_stay_lose_shift":8,"./browser":9,"./games.coffee":11,"./tournament/round_robin":12}],11:[function(require,module,exports){
+},{"./agent/always_cooperate":2,"./agent/always_defect":3,"./agent/maximin":4,"./agent/random":5,"./agent/tit_for_2_tats":6,"./agent/tit_for_tat":7,"./agent/win_stay_lose_shift":8,"./browser":9,"./games.coffee":11,"./tournament/evolutionary":12,"./tournament/round_robin":13}],11:[function(require,module,exports){
 (function() {
   var chicken, games, prisoner, stag;
 
@@ -595,6 +621,115 @@
 
 },{}],12:[function(require,module,exports){
 (function() {
+  var Evolutionary, Tournament, b,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Tournament = require('./tournament');
+
+  b = require('./../browser');
+
+  module.exports = Evolutionary = (function(_super) {
+    __extends(Evolutionary, _super);
+
+    function Evolutionary(games, agents, results) {
+      this.results = results;
+      Evolutionary.__super__.constructor.call(this, games, agents);
+    }
+
+    Evolutionary.prototype.start = function() {
+      var div, finalResults, game, generation, key, key1, key2, numOfAgents, percentage, percentage_new, score, val, _i, _j, _k, _l, _len, _len1, _len2, _m, _n, _o, _p, _q, _r, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _results, _s;
+      numOfAgents = this.getAgents().length;
+      _ref = this.getGames();
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        game = _ref[_i];
+        finalResults = [];
+        b.h2(game.name + ' game');
+        percentage = [];
+        for (key1 = _j = 0, _ref1 = numOfAgents - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; key1 = 0 <= _ref1 ? ++_j : --_j) {
+          percentage.push(1 / numOfAgents);
+          finalResults.push([]);
+        }
+        for (generation = _k = 0; _k <= 1000; generation = ++_k) {
+          for (key = _l = 0, _len1 = percentage.length; _l < _len1; key = ++_l) {
+            val = percentage[key];
+            finalResults[key][generation] = val;
+          }
+          percentage_new = [];
+          for (key1 = _m = 0, _ref2 = numOfAgents - 1; 0 <= _ref2 ? _m <= _ref2 : _m >= _ref2; key1 = 0 <= _ref2 ? ++_m : --_m) {
+            percentage_new.push(0);
+          }
+          score = [];
+          for (key1 = _n = 0, _ref3 = numOfAgents - 1; 0 <= _ref3 ? _n <= _ref3 : _n >= _ref3; key1 = 0 <= _ref3 ? ++_n : --_n) {
+            score.push(0);
+          }
+          for (key1 = _o = 0, _ref4 = numOfAgents - 1; 0 <= _ref4 ? _o <= _ref4 : _o >= _ref4; key1 = 0 <= _ref4 ? ++_o : --_o) {
+            for (key2 = _p = 0, _ref5 = numOfAgents - 1; 0 <= _ref5 ? _p <= _ref5 : _p >= _ref5; key2 = 0 <= _ref5 ? ++_p : --_p) {
+              score[key1] += percentage[key2] * this.results[game.name][key1][key2];
+            }
+          }
+          for (key1 = _q = 0, _ref6 = numOfAgents - 1; 0 <= _ref6 ? _q <= _ref6 : _q >= _ref6; key1 = 0 <= _ref6 ? ++_q : --_q) {
+            div = 0;
+            for (key2 = _r = 0, _ref7 = numOfAgents - 1; 0 <= _ref7 ? _r <= _ref7 : _r >= _ref7; key2 = 0 <= _ref7 ? ++_r : --_r) {
+              div += percentage[key2] * score[key2];
+            }
+            percentage_new[key1] = (percentage[key1] * score[key1]) / div;
+          }
+          percentage = [];
+          for (_s = 0, _len2 = percentage_new.length; _s < _len2; _s++) {
+            val = percentage_new[_s];
+            percentage.push(val);
+          }
+        }
+        _results.push(this.printFinalScore(finalResults));
+      }
+      return _results;
+    };
+
+    Evolutionary.prototype.printFinalScore = function(finalResults) {
+      var color, colors, data, key, line, result, val, _i, _j, _k, _len, _len1, _len2;
+      console.log(finalResults);
+      data = {};
+      data.datasets = [];
+      for (key = _i = 0, _len = finalResults.length; _i < _len; key = ++_i) {
+        result = finalResults[key];
+        data.labels = [];
+        line = {};
+        line.pointStrokeColor = "#111";
+        line.pointHighlightFill = "#fff";
+        line.label = this.getAgents()[key].engine.getName();
+        line.data = [];
+        for (key = _j = 0, _len1 = result.length; _j < _len1; key = ++_j) {
+          val = result[key];
+          if (key % 100 !== 0) {
+            continue;
+          }
+          line.data.push(Math.round(val * 100));
+          data.labels.push('Generation ' + key);
+        }
+        data.datasets.push(line);
+      }
+      console.log(data);
+      colors = ['77,77,77', '93,165,218', '250,164,58', '96,189,104', '241,88,84', '222,207,63', '241,124,176'];
+      for (key = _k = 0, _len2 = colors.length; _k < _len2; key = ++_k) {
+        color = colors[key];
+        data.datasets[key].fillColor = "rgba(" + color + ",0.2)";
+        data.datasets[key].strokeColor = "rgba(" + color + ",1)";
+        data.datasets[key].pointColor = "rgba(" + color + ",1)";
+        data.datasets[key].pointHighlightStroke = "rgba(" + color + ",1)";
+      }
+      return b.linechart(data);
+    };
+
+    return Evolutionary;
+
+  })(Tournament);
+
+}).call(this);
+
+},{"./../browser":9,"./tournament":14}],13:[function(require,module,exports){
+(function() {
   var RoundRobin, Tournament, b,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -610,11 +745,12 @@
       this.rounds = rounds != null ? rounds : 1000;
       this.averaging = averaging != null ? averaging : 5;
       RoundRobin.__super__.constructor.call(this, games, agents);
+      this.forEvResults = {};
       this.initFinalScore();
     }
 
     RoundRobin.prototype.start = function() {
-      var agent1, agent2, counter, game, rep, round, _i, _j, _k, _l, _len, _len1, _len2, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
+      var agent1, agent2, col, counter, game, newrow, rep, round, row, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _n, _o, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _results;
       _ref = this.getGames();
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -622,6 +758,7 @@
         b.h2(game.name + ' game');
         b.print(this.rounds * this.averaging * this.getAgents().length * this.getAgents().length + ' games have been played.');
         counter = 1;
+        this.forEvResults[game.name] = [];
         _ref1 = this.getAgents();
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           agent1 = _ref1[_j];
@@ -639,9 +776,23 @@
           }
         }
         this.printFinalScore();
+        _ref5 = this.finalScore;
+        for (_n = 0, _len3 = _ref5.length; _n < _len3; _n++) {
+          row = _ref5[_n];
+          newrow = [];
+          for (_o = 0, _len4 = row.length; _o < _len4; _o++) {
+            col = row[_o];
+            newrow.push(col / this.rounds);
+          }
+          this.forEvResults[game.name].push(newrow);
+        }
         _results.push(this.initFinalScore());
       }
       return _results;
+    };
+
+    RoundRobin.prototype.getFinalScoreForEvoTournament = function() {
+      return this.forEvResults;
     };
 
     RoundRobin.prototype.fight = function(game, agent1, agent2) {
@@ -702,6 +853,7 @@
           sum += finalScoreCopy[agent1.id][agent2.id];
         }
         finalScoreCopy[agent1.id].push(sum);
+        finalScoreCopy[agent1.id].push((sum / (this.getAgents().length * this.rounds)).toFixed(3));
         scores.push(sum);
       }
       for (key = _l = 0, _len2 = finalScoreCopy.length; _l < _len2; key = ++_l) {
@@ -715,6 +867,7 @@
         names.push(agent.engine.name);
       }
       names.push('Results');
+      names.push('Results average');
       finalScoreCopy.unshift(names);
       b.table(finalScoreCopy);
       labels = [];
@@ -743,7 +896,7 @@
 
 }).call(this);
 
-},{"./../browser":9,"./tournament":13}],13:[function(require,module,exports){
+},{"./../browser":9,"./tournament":14}],14:[function(require,module,exports){
 (function() {
   var Tournament;
 

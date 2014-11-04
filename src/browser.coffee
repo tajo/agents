@@ -101,5 +101,17 @@ module.exports.barchart = (data, options = null) ->
 		}
 	new Chart(canvas.getContext("2d")).Bar(data, options)
 
+module.exports.linechart = (data, options = null) ->
+	canvas = document.createElement 'canvas'
+	canvas.width  = 600
+	canvas.height = 400
+	document.body.appendChild canvas
+	if !options
+		options = {
+			scaleFontSize: 14
+			scaleFontFamily: 'Arial'
+		}
+	new Chart(canvas.getContext("2d")).Line(data, options)
+
 
 

@@ -4,6 +4,7 @@ b = require './../browser'
 module.exports = class RoundRobin extends Tournament
 	constructor: (games, agents, @rounds=1000, @averaging=5) ->
 		super games, agents
+		@forEvResults = {}
 		do @initFinalScore
 
 	start: ->
@@ -11,6 +12,7 @@ module.exports = class RoundRobin extends Tournament
 			b.h2  game.name + ' game'
 			b.print  @rounds * @averaging * @getAgents().length * @getAgents().length + ' games have been played.'
 			counter = 1
+			@forEvResults[game.name] = []
 			for agent1 in @getAgents()
 				for agent2 in @getAgents()
 					for rep in [1..@averaging]
@@ -20,7 +22,16 @@ module.exports = class RoundRobin extends Tournament
 					@finalScore[agent1.id][agent2.id] /= @averaging
 					@finalScore[agent1.id][agent2.id]  = Math.round(@finalScore[agent1.id][agent2.id])
 			do @printFinalScore
+
+			for row in @finalScore
+				newrow = []
+				for col in row
+					newrow.push col/@rounds
+				@forEvResults[game.name].push newrow
+
 			do @initFinalScore
+
+	getFinalScoreForEvoTournament: -> @forEvResults
 
 	fight: (game, agent1, agent2) ->
 		# let's play!
@@ -58,11 +69,13 @@ module.exports = class RoundRobin extends Tournament
 			sum = 0
 			sum += finalScoreCopy[agent1.id][agent2.id] for agent2 in @getAgents()
 			finalScoreCopy[agent1.id].push sum
+			finalScoreCopy[agent1.id].push (sum/(@getAgents().length*@rounds)).toFixed(3)
 			scores.push sum
 		row.unshift @getAgents()[key].engine.name for row, key in finalScoreCopy
 		names = ['']
 		names.push agent.engine.name for agent in @getAgents()
 		names.push 'Results'
+		names.push 'Results average'
 		finalScoreCopy.unshift names
 		b.table finalScoreCopy
 		labels = []

@@ -34,13 +34,21 @@ module.exports = class Evolutionary extends Tournament
 						div += percentage[key2] * score[key2]
 					percentage_new[key1] = (percentage[key1]*score[key1])/div
 
+				allsame = true
+				for i in [0..percentage_new.length-1]
+					if Math.abs(percentage[i]-percentage_new[i]) > 0.001
+						allsame = false
+						break
+
+				if allsame
+					break
+
 				percentage = []
 				percentage.push val for val in percentage_new
 			@printFinalScore finalResults
 
 
 	printFinalScore: (finalResults) ->
-		console.log finalResults
 		data = {}
 		data.datasets = []
 		for result,key in finalResults
@@ -50,12 +58,15 @@ module.exports = class Evolutionary extends Tournament
 			line.pointHighlightFill = "#fff"
 			line.label = @getAgents()[key].engine.getName()
 			line.data = []
+			mod = 1
+			if result.length > 25
+				mod = Math.round(result.length / 25)
+
 			for val, key in result
-				continue unless key % 100 is 0
+				continue unless key % mod is 0
 				line.data.push Math.round(val*100)
 				data.labels.push 'Generation '+ key
 			data.datasets.push line
-		console.log data
 		colors = ['77,77,77','93,165,218','250,164,58','96,189,104','241,88,84','222,207,63','241,124,176']
 		for color, key in colors
 			data.datasets[key].fillColor = "rgba("+color+",0.2)"
@@ -63,5 +74,8 @@ module.exports = class Evolutionary extends Tournament
 			data.datasets[key].pointColor = "rgba("+color+",1)"
 			data.datasets[key].pointHighlightStroke = "rgba("+color+",1)"
 		b.linechart data
+		for color, key in colors
+			b.chartlabel @getAgents()[key].engine.getName(), color
+
 
 

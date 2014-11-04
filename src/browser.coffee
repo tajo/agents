@@ -89,6 +89,7 @@ module.exports.progress = class Progress
 
 module.exports.barchart = (data, options = null) ->
 	canvas = document.createElement 'canvas'
+	canvas.id = module.exports.guid()
 	canvas.width  = 600
 	canvas.height = 400
 	document.body.appendChild canvas
@@ -103,15 +104,28 @@ module.exports.barchart = (data, options = null) ->
 
 module.exports.linechart = (data, options = null) ->
 	canvas = document.createElement 'canvas'
-	canvas.width  = 600
+	canvas.id = module.exports.guid()
+	canvas.width  = 800
 	canvas.height = 400
 	document.body.appendChild canvas
 	if !options
 		options = {
 			scaleFontSize: 14
 			scaleFontFamily: 'Arial'
+			bezierCurve : false
 		}
 	new Chart(canvas.getContext("2d")).Line(data, options)
+
+module.exports.chartlabel = (label, color) ->
+	module.exports.print '
+	 <div style="padding:3px;margin:2px;width: 200px;color:white;background-color:rgb('+color+')">
+	 ' +label+'
+	 </div>
+	 ', false
+
+module.exports.guid = ->
+    'guid' + Date.now()
+
 
 
 

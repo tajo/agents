@@ -454,6 +454,7 @@
       options = null;
     }
     canvas = document.createElement('canvas');
+    canvas.id = module.exports.guid();
     canvas.width = 600;
     canvas.height = 400;
     document.body.appendChild(canvas);
@@ -474,16 +475,26 @@
       options = null;
     }
     canvas = document.createElement('canvas');
-    canvas.width = 600;
+    canvas.id = module.exports.guid();
+    canvas.width = 800;
     canvas.height = 400;
     document.body.appendChild(canvas);
     if (!options) {
       options = {
         scaleFontSize: 14,
-        scaleFontFamily: 'Arial'
+        scaleFontFamily: 'Arial',
+        bezierCurve: false
       };
     }
     return new Chart(canvas.getContext("2d")).Line(data, options);
+  };
+
+  module.exports.chartlabel = function(label, color) {
+    return module.exports.print('<div style="padding:3px;margin:2px;width: 200px;color:white;background-color:rgb(' + color + ')">' + label + '</div>', false);
+  };
+
+  module.exports.guid = function() {
+    return 'guid' + Date.now();
   };
 
 }).call(this);
@@ -638,7 +649,7 @@
     }
 
     Evolutionary.prototype.start = function() {
-      var div, finalResults, game, generation, key, key1, key2, numOfAgents, percentage, percentage_new, score, val, _i, _j, _k, _l, _len, _len1, _len2, _m, _n, _o, _p, _q, _r, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _results, _s;
+      var allsame, div, finalResults, game, generation, i, key, key1, key2, numOfAgents, percentage, percentage_new, score, val, _i, _j, _k, _l, _len, _len1, _len2, _m, _n, _o, _p, _q, _r, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _results, _s, _t;
       numOfAgents = this.getAgents().length;
       _ref = this.getGames();
       _results = [];
@@ -676,9 +687,19 @@
             }
             percentage_new[key1] = (percentage[key1] * score[key1]) / div;
           }
+          allsame = true;
+          for (i = _s = 0, _ref8 = percentage_new.length - 1; 0 <= _ref8 ? _s <= _ref8 : _s >= _ref8; i = 0 <= _ref8 ? ++_s : --_s) {
+            if (Math.abs(percentage[i] - percentage_new[i]) > 0.001) {
+              allsame = false;
+              break;
+            }
+          }
+          if (allsame) {
+            break;
+          }
           percentage = [];
-          for (_s = 0, _len2 = percentage_new.length; _s < _len2; _s++) {
-            val = percentage_new[_s];
+          for (_t = 0, _len2 = percentage_new.length; _t < _len2; _t++) {
+            val = percentage_new[_t];
             percentage.push(val);
           }
         }
@@ -688,8 +709,7 @@
     };
 
     Evolutionary.prototype.printFinalScore = function(finalResults) {
-      var color, colors, data, key, line, result, val, _i, _j, _k, _len, _len1, _len2;
-      console.log(finalResults);
+      var color, colors, data, key, line, mod, result, val, _i, _j, _k, _l, _len, _len1, _len2, _len3, _results;
       data = {};
       data.datasets = [];
       for (key = _i = 0, _len = finalResults.length; _i < _len; key = ++_i) {
@@ -700,9 +720,13 @@
         line.pointHighlightFill = "#fff";
         line.label = this.getAgents()[key].engine.getName();
         line.data = [];
+        mod = 1;
+        if (result.length > 25) {
+          mod = Math.round(result.length / 25);
+        }
         for (key = _j = 0, _len1 = result.length; _j < _len1; key = ++_j) {
           val = result[key];
-          if (key % 100 !== 0) {
+          if (key % mod !== 0) {
             continue;
           }
           line.data.push(Math.round(val * 100));
@@ -710,7 +734,6 @@
         }
         data.datasets.push(line);
       }
-      console.log(data);
       colors = ['77,77,77', '93,165,218', '250,164,58', '96,189,104', '241,88,84', '222,207,63', '241,124,176'];
       for (key = _k = 0, _len2 = colors.length; _k < _len2; key = ++_k) {
         color = colors[key];
@@ -719,7 +742,13 @@
         data.datasets[key].pointColor = "rgba(" + color + ",1)";
         data.datasets[key].pointHighlightStroke = "rgba(" + color + ",1)";
       }
-      return b.linechart(data);
+      b.linechart(data);
+      _results = [];
+      for (key = _l = 0, _len3 = colors.length; _l < _len3; key = ++_l) {
+        color = colors[key];
+        _results.push(b.chartlabel(this.getAgents()[key].engine.getName(), color));
+      }
+      return _results;
     };
 
     return Evolutionary;

@@ -13,6 +13,7 @@ module.exports.print = (value, escaped = true) ->
 	value = module.exports.escapeHtml value if escaped
 	div.innerHTML = value
 	document.body.appendChild div
+	return div
 
 module.exports.code = (value, escaped = true) ->
 	div = document.createElement 'pre'
@@ -116,12 +117,22 @@ module.exports.linechart = (data, options = null) ->
 		}
 	new Chart(canvas.getContext("2d")).Line(data, options)
 
-module.exports.chartlabel = (label, color) ->
-	module.exports.print '
-	 <div style="padding:3px;margin:2px;width: 200px;color:white;background-color:rgb('+color+')">
-	 ' +label+'
-	 </div>
-	 ', false
+module.exports.chartlabel = (names, colors) ->
+
+	div = document.createElement 'div'
+	div.style.width = '200px'
+	div.style.float = 'left'
+	div.style.marginTop = '25px'
+	for name, key in names
+		innerDiv = document.createElement 'div'
+		innerDiv.style.padding = '3px'
+		innerDiv.style.margin = '2px'
+		innerDiv.style.color = 'white'
+		innerDiv.style.backgroundColor = 'rgb(' + colors[key] + ')'
+		innerDiv.innerHTML = name
+		div.appendChild innerDiv
+	document.body.appendChild div
+	return div
 
 module.exports.guid = ->
     'guid' + Date.now()

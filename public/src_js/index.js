@@ -1,5 +1,61 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function() {
+  var Agent, Terminator,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Agent = require('./agent');
+
+  module.exports = Terminator = (function(_super) {
+    __extends(Terminator, _super);
+
+    function Terminator() {
+      Terminator.__super__.constructor.call(this);
+      this.setName('Terminator');
+      this.playingAgainstAC = false;
+      this.playingAgainstAD = false;
+    }
+
+    Terminator.prototype.play = function() {
+      if (this.getGame().name !== 'Stag Hunt') {
+        if (this.getHistory().length < 3) {
+          return 'defect';
+        }
+        if (this.getHistory().length === 3 && this.getPreviousMove() === 'cooperate') {
+          this.playingAgainstAC = true;
+        }
+        if (this.playingAgainstAC) {
+          return 'defect';
+        }
+      }
+      if (this.getGame().name !== 'Chicken') {
+        if (this.getHistory().length < 6) {
+          return 'cooperate';
+        }
+        if (this.getHistory().length === 6 && this.getPreviousMove() === 'defect') {
+          this.playingAgainstAD = true;
+        }
+        if (this.playingAgainstAD) {
+          return 'defect';
+        }
+      }
+      return 'cooperate';
+    };
+
+    Terminator.prototype.reset = function() {
+      Terminator.__super__.reset.call(this);
+      this.playingAgainstAC = false;
+      return this.playingAgainstAD = false;
+    };
+
+    return Terminator;
+
+  })(Agent);
+
+}).call(this);
+
+},{"./agent":2}],2:[function(require,module,exports){
+(function() {
   var Agent;
 
   module.exports = Agent = (function() {
@@ -57,7 +113,7 @@
 
 }).call(this);
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 (function() {
   var Agent, AlwaysCooperate,
     __hasProp = {}.hasOwnProperty,
@@ -83,7 +139,7 @@
 
 }).call(this);
 
-},{"./agent":1}],3:[function(require,module,exports){
+},{"./agent":2}],4:[function(require,module,exports){
 (function() {
   var Agent, AlwaysDefect,
     __hasProp = {}.hasOwnProperty,
@@ -109,7 +165,7 @@
 
 }).call(this);
 
-},{"./agent":1}],4:[function(require,module,exports){
+},{"./agent":2}],5:[function(require,module,exports){
 (function() {
   var Agent, Maximin,
     __hasProp = {}.hasOwnProperty,
@@ -149,7 +205,7 @@
 
 }).call(this);
 
-},{"./agent":1}],5:[function(require,module,exports){
+},{"./agent":2}],6:[function(require,module,exports){
 (function() {
   var Agent, Random,
     __hasProp = {}.hasOwnProperty,
@@ -178,7 +234,7 @@
 
 }).call(this);
 
-},{"./agent":1}],6:[function(require,module,exports){
+},{"./agent":2}],7:[function(require,module,exports){
 (function() {
   var Agent, TitFor2Tats,
     __hasProp = {}.hasOwnProperty,
@@ -209,7 +265,7 @@
 
 }).call(this);
 
-},{"./agent":1}],7:[function(require,module,exports){
+},{"./agent":2}],8:[function(require,module,exports){
 (function() {
   var Agent, TitForTat,
     __hasProp = {}.hasOwnProperty,
@@ -238,7 +294,7 @@
 
 }).call(this);
 
-},{"./agent":1}],8:[function(require,module,exports){
+},{"./agent":2}],9:[function(require,module,exports){
 
 /**
  * Win-stay, lose-shift - This algorithm begins by playing cooperate,
@@ -309,7 +365,7 @@
 
 }).call(this);
 
-},{"./agent":1}],9:[function(require,module,exports){
+},{"./agent":2}],10:[function(require,module,exports){
 (function() {
   var Progress;
 
@@ -337,7 +393,8 @@
       value = module.exports.escapeHtml(value);
     }
     div.innerHTML = value;
-    return document.body.appendChild(div);
+    document.body.appendChild(div);
+    return div;
   };
 
   module.exports.code = function(value, escaped) {
@@ -489,8 +546,24 @@
     return new Chart(canvas.getContext("2d")).Line(data, options);
   };
 
-  module.exports.chartlabel = function(label, color) {
-    return module.exports.print('<div style="padding:3px;margin:2px;width: 200px;color:white;background-color:rgb(' + color + ')">' + label + '</div>', false);
+  module.exports.chartlabel = function(names, colors) {
+    var div, innerDiv, key, name, _i, _len;
+    div = document.createElement('div');
+    div.style.width = '200px';
+    div.style.float = 'left';
+    div.style.marginTop = '25px';
+    for (key = _i = 0, _len = names.length; _i < _len; key = ++_i) {
+      name = names[key];
+      innerDiv = document.createElement('div');
+      innerDiv.style.padding = '3px';
+      innerDiv.style.margin = '2px';
+      innerDiv.style.color = 'white';
+      innerDiv.style.backgroundColor = 'rgb(' + colors[key] + ')';
+      innerDiv.innerHTML = name;
+      div.appendChild(innerDiv);
+    }
+    document.body.appendChild(div);
+    return div;
   };
 
   module.exports.guid = function() {
@@ -499,9 +572,9 @@
 
 }).call(this);
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function() {
-  var AlwaysCooperate, AlwaysDefect, Evolutionary, Maximin, Random, RoundRobin, TitFor2Tats, TitForTat, WinStayLoseShift, agent, agents, averaging, b, evolutionary, games, key, roundRobin, rounds, _i, _len;
+  var AlwaysCooperate, AlwaysDefect, Evolutionary, Maximin, Random, RoundRobin, Terminator, TitFor2Tats, TitForTat, WinStayLoseShift, agent, agents, averaging, b, evolutionary, games, key, roundRobin, rounds, _i, _len;
 
   b = require('./browser');
 
@@ -520,6 +593,8 @@
   Maximin = require('./agent/maximin');
 
   WinStayLoseShift = require('./agent/win_stay_lose_shift');
+
+  Terminator = require('./agent/Terminator');
 
   RoundRobin = require('./tournament/round_robin');
 
@@ -555,6 +630,10 @@
     engine: new WinStayLoseShift
   });
 
+  agents.push({
+    engine: new Terminator
+  });
+
   for (key = _i = 0, _len = agents.length; _i < _len; key = ++_i) {
     agent = agents[key];
     agent.id = key;
@@ -580,7 +659,7 @@
 
 }).call(this);
 
-},{"./agent/always_cooperate":2,"./agent/always_defect":3,"./agent/maximin":4,"./agent/random":5,"./agent/tit_for_2_tats":6,"./agent/tit_for_tat":7,"./agent/win_stay_lose_shift":8,"./browser":9,"./games.coffee":11,"./tournament/evolutionary":12,"./tournament/round_robin":13}],11:[function(require,module,exports){
+},{"./agent/Terminator":1,"./agent/always_cooperate":3,"./agent/always_defect":4,"./agent/maximin":5,"./agent/random":6,"./agent/tit_for_2_tats":7,"./agent/tit_for_tat":8,"./agent/win_stay_lose_shift":9,"./browser":10,"./games.coffee":12,"./tournament/evolutionary":13,"./tournament/round_robin":14}],12:[function(require,module,exports){
 (function() {
   var chicken, games, prisoner, stag;
 
@@ -630,7 +709,7 @@
 
 }).call(this);
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 (function() {
   var Evolutionary, Tournament, b,
     __hasProp = {}.hasOwnProperty,
@@ -656,7 +735,6 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         game = _ref[_i];
         finalResults = [];
-        b.h2(game.name + ' game');
         percentage = [];
         for (key1 = _j = 0, _ref1 = numOfAgents - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; key1 = 0 <= _ref1 ? ++_j : --_j) {
           percentage.push(1 / numOfAgents);
@@ -703,13 +781,14 @@
             percentage.push(val);
           }
         }
-        _results.push(this.printFinalScore(finalResults));
+        _results.push(this.printFinalScore(finalResults, game.name));
       }
       return _results;
     };
 
-    Evolutionary.prototype.printFinalScore = function(finalResults) {
-      var color, colors, data, key, line, mod, result, val, _i, _j, _k, _l, _len, _len1, _len2, _len3, _results;
+    Evolutionary.prototype.printFinalScore = function(finalResults, game) {
+      var agent, color, colors, data, key, line, mod, names, result, val, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref;
+      b.h2(game + ' game (' + finalResults[0].length + ' generations)');
       data = {};
       data.datasets = [];
       for (key = _i = 0, _len = finalResults.length; _i < _len; key = ++_i) {
@@ -730,11 +809,11 @@
             continue;
           }
           line.data.push(Math.round(val * 100));
-          data.labels.push('Generation ' + key);
+          data.labels.push('Generation ' + (key + 1));
         }
         data.datasets.push(line);
       }
-      colors = ['77,77,77', '93,165,218', '250,164,58', '96,189,104', '241,88,84', '222,207,63', '241,124,176'];
+      colors = ['77,77,77', '93,165,218', '250,164,58', '96,189,104', '241,88,84', '222,207,63', '241,124,176', '165,42,42'];
       for (key = _k = 0, _len2 = colors.length; _k < _len2; key = ++_k) {
         color = colors[key];
         data.datasets[key].fillColor = "rgba(" + color + ",0.2)";
@@ -743,12 +822,13 @@
         data.datasets[key].pointHighlightStroke = "rgba(" + color + ",1)";
       }
       b.linechart(data);
-      _results = [];
-      for (key = _l = 0, _len3 = colors.length; _l < _len3; key = ++_l) {
-        color = colors[key];
-        _results.push(b.chartlabel(this.getAgents()[key].engine.getName(), color));
+      names = [];
+      _ref = this.getAgents();
+      for (key = _l = 0, _len3 = _ref.length; _l < _len3; key = ++_l) {
+        agent = _ref[key];
+        names.push(agent.engine.getName() + ' <div style="float: right">' + Math.round(finalResults[key][finalResults[key].length - 1] * 100) + '%</div>');
       }
-      return _results;
+      return b.chartlabel(names, colors);
     };
 
     return Evolutionary;
@@ -757,7 +837,7 @@
 
 }).call(this);
 
-},{"./../browser":9,"./tournament":14}],13:[function(require,module,exports){
+},{"./../browser":10,"./tournament":15}],14:[function(require,module,exports){
 (function() {
   var RoundRobin, Tournament, b,
     __hasProp = {}.hasOwnProperty,
@@ -925,7 +1005,7 @@
 
 }).call(this);
 
-},{"./../browser":9,"./tournament":14}],14:[function(require,module,exports){
+},{"./../browser":10,"./tournament":15}],15:[function(require,module,exports){
 (function() {
   var Tournament;
 
@@ -961,4 +1041,4 @@
 
 }).call(this);
 
-},{}]},{},[10])
+},{}]},{},[11])

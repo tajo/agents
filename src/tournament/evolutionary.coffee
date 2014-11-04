@@ -9,7 +9,6 @@ module.exports = class Evolutionary extends Tournament
 		numOfAgents = @getAgents().length
 		for game in @getGames()
 			finalResults = []
-			b.h2  game.name + ' game'
 
 			percentage = []
 			for key1 in [0..numOfAgents-1]
@@ -45,10 +44,11 @@ module.exports = class Evolutionary extends Tournament
 
 				percentage = []
 				percentage.push val for val in percentage_new
-			@printFinalScore finalResults
+			@printFinalScore finalResults, game.name
 
 
-	printFinalScore: (finalResults) ->
+	printFinalScore: (finalResults, game) ->
+		b.h2 game + ' game (' + finalResults[0].length + ' generations)'
 		data = {}
 		data.datasets = []
 		for result,key in finalResults
@@ -65,17 +65,19 @@ module.exports = class Evolutionary extends Tournament
 			for val, key in result
 				continue unless key % mod is 0
 				line.data.push Math.round(val*100)
-				data.labels.push 'Generation '+ key
+				data.labels.push 'Generation '+ (key+1)
 			data.datasets.push line
-		colors = ['77,77,77','93,165,218','250,164,58','96,189,104','241,88,84','222,207,63','241,124,176']
+		colors = ['77,77,77','93,165,218','250,164,58','96,189,104','241,88,84','222,207,63','241,124,176','165,42,42']
 		for color, key in colors
 			data.datasets[key].fillColor = "rgba("+color+",0.2)"
 			data.datasets[key].strokeColor = "rgba("+color+",1)"
 			data.datasets[key].pointColor = "rgba("+color+",1)"
 			data.datasets[key].pointHighlightStroke = "rgba("+color+",1)"
 		b.linechart data
-		for color, key in colors
-			b.chartlabel @getAgents()[key].engine.getName(), color
+		names = []
+		for agent, key in @getAgents()
+			names.push agent.engine.getName() + ' <div style="float: right">' +  Math.round(finalResults[key][finalResults[key].length-1]*100) + '%</div>'
+		b.chartlabel names, colors
 
 
 

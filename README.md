@@ -3,7 +3,7 @@ Agents
 
 Multi-agents playing tournaments in prisoner's dilemma, chicken and stag hunt games.
 
-Check [the demo with a description of results](https://agents.miksu.cz)
+Check [the demo with a description of results](http://agents.miksu.cz)
 
 Installation
 ------------
